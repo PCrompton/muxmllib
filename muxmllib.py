@@ -28,6 +28,50 @@ PITCH_CLASSES = {
 	'11':{'A': 2,'B': 0,'C': -1}	
 }
 
+ACCIDENTALS = {
+	'-2':'bb',
+	'-1':'b',
+	'0':'',
+	'1':'#',
+	'2':'x',
+}
+
+class Muxml():
+	def __init__(self, filename):
+		self.dom = xml.dom.minidom.parse(filename)
+	
+	def transpose(self, interval, quality, octaves=0):
+		for note_node in self.dom.getElementsByTagName("note"):
+			for pitch_node in note_node.getElementsByTagName("pitch"):
+				pitch = create_pitch(pitch_node)
+				
+				print pitch.step + ACCIDENTALS[str(pitch.alter)] + str(pitch.octave)
+				
+				pitch.transpose(interval, quality)
+				
+				print pitch.step + ACCIDENTALS[str(pitch.alter)] + str(pitch.octave)
+				print
+				
+				pitch_node.getElementsByTagName("step")[0].firstChild.data = pitch.step
+				try:
+					pitch_node.getElementsByTagName("alter")[0].firstChild.data = pitch.alter
+				except:
+					pass
+				pitch_node.getElementsByTagName("octave")[0].firstChild.data = pitch.octave
+				
+				if interval < 0:
+					direction = 'down'
+				else:
+					direction = 'up'
+				
+				#self.write(self.dom, 'output/'+filename.split('.')[0]+'_'+direction+str(quality)+str(abs(interval))+str(octaves)+".xml")
+		
+	def write(self, filename):
+		xml_str = self.dom.toxml().encode('utf-8')
+		file = open(filename, 'w')
+		file.write(xml_str)
+		file.close()
+
 class Pitch():
 	def __init__(self, step, alter, octave):
 		self.step = step
@@ -58,7 +102,7 @@ class Pitch():
 		self.octave = new_octave
 		self.pitch_class = new_pitch_class
 		self.semitone = new_semitone
-		
+
 
 def create_pitch(pitch):
 	step = pitch.getElementsByTagName("step")[0].firstChild.data
@@ -69,36 +113,8 @@ def create_pitch(pitch):
 	octave = pitch.getElementsByTagName("octave")[0].firstChild.data
 	return Pitch(step, alter, octave)
 		
-def write_xml(dom_obj, filename):
-	xml_str = dom_obj.toxml().encode('utf-8')
-	file = open(filename, 'w')
-	file.write(xml_str)
-	file.close()
+
 	
-def transpose_doc(filename, interval, quality, octaves=0):
-	musicxml = xml.dom.minidom.parse(filename)
-	for note_node in musicxml.getElementsByTagName("note"):
-		for pitch_node in note_node.getElementsByTagName("pitch"):
-			pitch = create_pitch(pitch_node)
-			
-			print pitch.step, pitch.alter, pitch.octave
-			pitch.transpose(interval, quality)
-			print pitch.step, pitch.alter, pitch.octave
-			print
-			
-			pitch_node.getElementsByTagName("step")[0].firstChild.data = pitch.step
-			try:
-				pitch_node.getElementsByTagName("alter")[0].firstChild.data = pitch.alter
-			except:
-				pass
-			pitch_node.getElementsByTagName("octave")[0].firstChild.data = pitch.octave
-			
-			if interval < 0:
-				direction = 'down'
-			else:
-				direction = 'up'
-			
-			write_xml(musicxml, 'output/'+filename.split('.')[0]+'_'+direction+str(quality)+str(abs(interval))+str(octaves)+".xml")
 			
 
 
