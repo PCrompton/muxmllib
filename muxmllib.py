@@ -3,6 +3,63 @@ import xml.dom.minidom
 PITCHES = "CDEFGAB"
 CHROMATIC_SCALE = "C^D^EF^G^A^B"
 
+INTERVALS ={
+	'1':{
+		'dim': -1,
+		'per': 0,
+		'aug': 1
+	},
+	'2':{
+		'dim': 0,
+		'min': 1,
+		'maj': 2,
+		'aug': 3
+	},
+	'3': {
+		'dim': 2,
+		'min': 3,
+		'maj': 4,
+		'aug': 5
+	},
+	'4':{
+		'dim': 4,
+		'per': 5,
+		'aug': 6
+	},
+	'5':{
+		'dim': 6,
+		'per': 7,
+		'aug': 8
+	},
+	'6':{
+		'dim': 7,
+		'min': 8,
+		'maj': 9,
+		'aug': 10
+	},
+	'7':{
+		'dim': 9,
+		'min': 10,
+		'maj': 11,
+		'aug': 12
+	}
+}
+
+PITCH_CLASSES = {
+	'0':['B#','C','Dbb'],
+	'1':['Bx','C#','Db'],
+	'2':['Cx','D','Ebb'],
+	'3':['D#','Eb','Fbb'],
+	'4':['Dx','E','Fb'],
+	'5':['E#','F','Gbb' ],
+	'6':['Ex','F#','Gb'],
+	'7':['Fx','G','Abb'],
+	'8':['G#','Ab'],
+	'9':['Gx','A','Bbb'],
+	'10':['A#','Bb','Cbb'],
+	'11':['Ax','B','Cb']	
+}
+
 class Pitch():
 	def __init__(self, step, alter, octave):
 		self.step = step
