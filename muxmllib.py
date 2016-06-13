@@ -77,7 +77,7 @@ class Interval():
 		self.quality = quality
 		self.octave = octave
 		self.semitones = INTERVALS[str(abs(interval))][quality]*(abs(interval)/interval)
-		self.direction = [None, 'down', 'up'][abs(interval)/interval]
+		self.direction = [None, 'up', 'down'][abs(interval)/interval]
 		
 	@classmethod
 	def create(cls, interval, quality, octave=0):
@@ -110,10 +110,10 @@ class Pitch():
 		new_step = PITCHES[(PITCHES.find(self.step)+delta_steps)%len(PITCHES)]
 		new_alter = PITCH_CLASSES[str(new_pitch_class)][new_step]
 		new_octave = self.octave
-		if interval.direction == 'down':
+		if interval.direction == 'up':
 			if PITCHES.find(self.step) > PITCHES.find(new_step):
 				new_octave += 1
-		elif interval.direction == 'up':
+		elif interval.direction == 'down':
 			if PITCHES.find(self.step) < PITCHES.find(new_step):
 				new_octave -= 1
 		new_octave += interval.octave
