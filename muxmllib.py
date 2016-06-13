@@ -48,38 +48,23 @@ class Muxml():
 			note_nodes.append(note_node)
 		self.notes = note_nodes
 			
-	def get_pitch_nodes(self):
+	def get_pitches(self):
 		if not self.notes:
 			self.get_note_nodes()
-		pitch_nodes = []
+		pitches = []
 		for note_node in self.notes:
 			for pitch_node in note_node.getElementsByTagName("pitch"):
-				pitch_nodes.append(pitch_node)
-		self.pitches = pitch_nodes
+				pitch = Pitch.create(pitch_node)
+				pitches.append(pitch)
+		self.pitches = pitches
 	
 	def transpose(self, interval, quality, octaves=0):
 		interval = Interval.create(interval, quality, octaves)
-		
 		if not self.pitches:
-			self.get_pitch_nodes()
-		
-		for pitch_node in self.pitches:
-			pitch = Pitch.create(pitch_node)
-			
-			print pitch.step + ACCIDENTALS[str(pitch.alter)] + str(pitch.octave)
-			
+			self.get_pitches()
+		for pitch in self.pitches:
 			pitch.transpose(interval)
 				
-			print pitch.step + ACCIDENTALS[str(pitch.alter)] + str(pitch.octave)
-			print
-		
-			pitch_node.getElementsByTagName("step")[0].firstChild.data = pitch.step
-			try:
-				pitch_node.getElementsByTagName("alter")[0].firstChild.data = pitch.alter
-			except:
-				pass
-			pitch_node.getElementsByTagName("octave")[0].firstChild.data = pitch.octave
-		
 	def write(self, filename):
 		xml_str = self.dom.toxml().encode('utf-8')
 		file = open(filename, 'w')
@@ -94,13 +79,13 @@ class Interval():
 		self.semitones = INTERVALS[str(abs(interval))][quality]*(abs(interval)/interval)
 		self.direction = [None, 'down', 'up'][abs(interval)/interval]
 		
-	
 	@classmethod
 	def create(cls, interval, quality, octave=0):
 		return Interval(interval, quality, octave=0)
 
 class Pitch():
-	def __init__(self, step, alter, octave):
+	def __init__(self, pitch_node, step, alter, octave):
+		self.node = pitch_node
 		self.step = step
 		self.alter = int(alter)
 		self.octave = int(octave)
@@ -115,10 +100,9 @@ class Pitch():
 		except:
 			alter = 0
 		octave = pitch_node.getElementsByTagName("octave")[0].firstChild.data
-		return Pitch(step, alter, octave)
+		return Pitch(pitch_node, step, alter, octave)
 	
 	def transpose(self, interval):
-		
 		delta_semitone = interval.semitones
 		new_semitone = self.semitone + delta_semitone
 		new_pitch_class = new_semitone % 12
@@ -133,7 +117,12 @@ class Pitch():
 			if PITCHES.find(self.step) < PITCHES.find(new_step):
 				new_octave -= 1
 		new_octave += interval.octave
-		
+		self.node.getElementsByTagName("step")[0].firstChild.data = self.step
+		try:
+			self.node.getElementsByTagName("alter")[0].firstChild.data = self.alter
+		except:
+			pass
+		self.node.getElementsByTagName("octave")[0].firstChild.data = self.octave
 		self.step = new_step
 		self.alter = new_alter
 		self.octave = new_octave
