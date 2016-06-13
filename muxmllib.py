@@ -39,32 +39,49 @@ ACCIDENTALS = {
 class Muxml():
 	def __init__(self, filename):
 		self.dom = xml.dom.minidom.parse(filename)
+		self.notes = None
+		self.pitches = None
+	
+	def get_note_nodes(self):
+		note_nodes = []
+		for note_node in self.dom.getElementsByTagName("note"):
+			note_nodes.append(note_node)
+		self.notes = note_nodes
+			
+	def get_pitch_nodes(self):
+		if not self.notes:
+			self.get_note_nodes()
+		pitch_nodes = []
+		for note_node in self.notes:
+			for pitch_node in note_node.getElementsByTagName("pitch"):
+				pitch_nodes.append(pitch_node)
+		self.pitches = pitch_nodes
 	
 	def transpose(self, interval, quality, octaves=0):
-		for note_node in self.dom.getElementsByTagName("note"):
-			for pitch_node in note_node.getElementsByTagName("pitch"):
-				pitch = create_pitch(pitch_node)
+		if not self.pitches:
+			self.get_pitch_nodes()
+		
+		for pitch_node in self.pitches:
+			pitch = Pitch.create(pitch_node)
+			
+			print pitch.step + ACCIDENTALS[str(pitch.alter)] + str(pitch.octave)
+			
+			pitch.transpose(interval, quality)
 				
-				print pitch.step + ACCIDENTALS[str(pitch.alter)] + str(pitch.octave)
-				
-				pitch.transpose(interval, quality)
-				
-				print pitch.step + ACCIDENTALS[str(pitch.alter)] + str(pitch.octave)
-				print
-				
-				pitch_node.getElementsByTagName("step")[0].firstChild.data = pitch.step
-				try:
-					pitch_node.getElementsByTagName("alter")[0].firstChild.data = pitch.alter
-				except:
-					pass
-				pitch_node.getElementsByTagName("octave")[0].firstChild.data = pitch.octave
-				
-				if interval < 0:
-					direction = 'down'
-				else:
-					direction = 'up'
-				
-				#self.write(self.dom, 'output/'+filename.split('.')[0]+'_'+direction+str(quality)+str(abs(interval))+str(octaves)+".xml")
+			print pitch.step + ACCIDENTALS[str(pitch.alter)] + str(pitch.octave)
+			print
+		
+			pitch_node.getElementsByTagName("step")[0].firstChild.data = pitch.step
+			try:
+				pitch_node.getElementsByTagName("alter")[0].firstChild.data = pitch.alter
+			except:
+				pass
+			pitch_node.getElementsByTagName("octave")[0].firstChild.data = pitch.octave
+			
+			if interval < 0:
+				direction = 'down'
+			else:
+				direction = 'up'
 		
 	def write(self, filename):
 		xml_str = self.dom.toxml().encode('utf-8')
@@ -79,6 +96,16 @@ class Pitch():
 		self.octave = int(octave)
 		self.pitch_class = int(PITCHES.find(step)) + self.alter
 		self.semitone = 12*self.octave + self.pitch_class
+	
+	@classmethod
+	def create(cls, pitch_node):
+		step = pitch_node.getElementsByTagName("step")[0].firstChild.data
+		try:
+			alter = pitch_node.getElementsByTagName("alter")[0].firstChild.data
+		except:
+			alter = 0
+		octave = pitch_node.getElementsByTagName("octave")[0].firstChild.data
+		return Pitch(step, alter, octave)
 	
 	def transpose(self, interval, quality, octave=0):
 		
@@ -104,14 +131,7 @@ class Pitch():
 		self.semitone = new_semitone
 
 
-def create_pitch(pitch):
-	step = pitch.getElementsByTagName("step")[0].firstChild.data
-	try:
-		alter = pitch.getElementsByTagName("alter")[0].firstChild.data
-	except:
-		alter = 0
-	octave = pitch.getElementsByTagName("octave")[0].firstChild.data
-	return Pitch(step, alter, octave)
+
 		
 
 	
