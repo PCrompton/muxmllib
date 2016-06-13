@@ -79,11 +79,6 @@ class Muxml():
 			except:
 				pass
 			pitch_node.getElementsByTagName("octave")[0].firstChild.data = pitch.octave
-			
-			if interval < 0:
-				direction = 'down'
-			else:
-				direction = 'up'
 		
 	def write(self, filename):
 		xml_str = self.dom.toxml().encode('utf-8')
@@ -97,6 +92,8 @@ class Interval():
 		self.quality = quality
 		self.octave = octave
 		self.semitones = INTERVALS[str(abs(interval))][quality]*(abs(interval)/interval)
+		self.direction = [None, 'down', 'up'][abs(interval)/interval]
+		
 	
 	@classmethod
 	def create(cls, interval, quality, octave=0):
@@ -129,10 +126,10 @@ class Pitch():
 		new_step = PITCHES[(PITCHES.find(self.step)+delta_steps)%len(PITCHES)]
 		new_alter = PITCH_CLASSES[str(new_pitch_class)][new_step]
 		new_octave = self.octave
-		if interval.interval > 0:
+		if interval.direction == 'down':
 			if PITCHES.find(self.step) > PITCHES.find(new_step):
 				new_octave += 1
-		elif interval.interval < 0:
+		elif interval.direction == 'up':
 			if PITCHES.find(self.step) < PITCHES.find(new_step):
 				new_octave -= 1
 		new_octave += interval.octave
