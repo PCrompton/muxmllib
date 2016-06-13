@@ -58,6 +58,8 @@ class Muxml():
 		self.pitches = pitch_nodes
 	
 	def transpose(self, interval, quality, octaves=0):
+		interval = Interval.create(interval, quality, octaves)
+		
 		if not self.pitches:
 			self.get_pitch_nodes()
 		
@@ -66,7 +68,7 @@ class Muxml():
 			
 			print pitch.step + ACCIDENTALS[str(pitch.alter)] + str(pitch.octave)
 			
-			pitch.transpose(interval, quality)
+			pitch.transpose(interval)
 				
 			print pitch.step + ACCIDENTALS[str(pitch.alter)] + str(pitch.octave)
 			print
@@ -89,6 +91,17 @@ class Muxml():
 		file.write(xml_str)
 		file.close()
 
+class Interval():
+	def __init__(self, interval, quality, octave=0):
+		self.interval = interval
+		self.quality = quality
+		self.octave = octave
+		self.semitones = INTERVALS[str(abs(interval))][quality]*(abs(interval)/interval)
+	
+	@classmethod
+	def create(cls, interval, quality, octave=0):
+		return Interval(interval, quality, octave=0)
+
 class Pitch():
 	def __init__(self, step, alter, octave):
 		self.step = step
@@ -107,22 +120,22 @@ class Pitch():
 		octave = pitch_node.getElementsByTagName("octave")[0].firstChild.data
 		return Pitch(step, alter, octave)
 	
-	def transpose(self, interval, quality, octave=0):
+	def transpose(self, interval):
 		
-		delta_semitone = INTERVALS[str(abs(interval))][quality]*(abs(interval)/interval)
+		delta_semitone = interval.semitones
 		new_semitone = self.semitone + delta_semitone
 		new_pitch_class = new_semitone % 12
-		delta_steps = interval + -abs(interval)/interval #adjust the interval number to a more programming friendly value
+		delta_steps = interval.interval + -abs(interval.interval)/interval.interval #adjust the interval number to a more programming friendly value
 		new_step = PITCHES[(PITCHES.find(self.step)+delta_steps)%len(PITCHES)]
 		new_alter = PITCH_CLASSES[str(new_pitch_class)][new_step]
 		new_octave = self.octave
-		if interval > 0:
+		if interval.interval > 0:
 			if PITCHES.find(self.step) > PITCHES.find(new_step):
 				new_octave += 1
-		elif interval < 0:
+		elif interval.interval < 0:
 			if PITCHES.find(self.step) < PITCHES.find(new_step):
 				new_octave -= 1
-		new_octave += octave
+		new_octave += interval.octave
 		
 		self.step = new_step
 		self.alter = new_alter
