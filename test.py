@@ -6,49 +6,23 @@ from muxmllib import *
 def compare_pitches(interval, pitch_node, params):
 
 	pitch = Pitch.create(pitch_node)
+	tests = [
+		(pitch.step, params['step'], 'step'),
+		(pitch.alter, params['alter'], 'alter'),
+		(pitch.octave, params['octave'], 'octave'),
+		(pitch.pitch_class, params['pitch_class'], 'pitch_class'),
+		(pitch.semitone, params['semitone'], 'pitch_class')
+	]	
+	results = []
+	for t in tests:
+		results.append(t[0] == t[1])
+	print interval, pitch.spell()
+	if False in results:
+		for r in results:
+			print r, tests[results.index(r)]
+	else:
+		print 'Test Case Passed!'
 
-	if not pitch.step == params['step']:
-		print
-		print pitch_node
-		print interval, pitch.spell()
-		print
-		print 'result:', 'step', pitch.step
-		print 'should be:', params['step']
-		print
-	if not pitch.alter == params['alter']:
-		print
-		print pitch_node
-		print interval, pitch.spell()
-		print
-		print 'result:', 'alter', pitch.alter
-		print 'should be:', params['alter']
-		print
-	if not pitch.octave == params['octave']:
-		print
-		print pitch_node
-		print interval, pitch.spell()
-		print
-		print 'result:', 'octave', pitch.octave
-		print 'should be:', params['octave']
-		print
-	if not pitch.pitch_class == params['pitch_class']:
-		print
-		print pitch_node
-		print interval, pitch.spell()
-		print
-		print 'result:', 'pitch_class', pitch.pitch_class
-		print 'should be', params['pitch_class']
-		print
-	if not pitch.semitone == params['semitone']:
-		print
-		print pitch_node
-		print interval, pitch.spell()
-		print
-		print 'result:', 'semitone', pitch.semitone
-		print 'should be:', params['semitone']
-		print
-	#print '--------------------------------'
- 
 dir = 'tests'
 
 try:
