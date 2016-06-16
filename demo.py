@@ -17,7 +17,7 @@ for i in range (-7, 8):
 		musicxml.get_pitches()
 		for j in range(0, len(musicxml.pitches)):
 			print musicxml.pitches[j].step + ACCIDENTALS[str(musicxml.pitches[j].alter)] + str(musicxml.pitches[j].octave)
-		musicxml.transpose(i, quality)
+		musicxml.transpose(Interval.create(i, quality))
 		for j in range(0, len(musicxml.pitches)):
 			print musicxml.pitches[j].step + ACCIDENTALS[str(musicxml.pitches[j].alter)] + str(musicxml.pitches[j].octave)
 		
