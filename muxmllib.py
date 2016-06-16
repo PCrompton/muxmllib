@@ -59,8 +59,7 @@ class Muxml():
 		self.pitches = pitches
 		return pitches
 	
-	def transpose(self, interval, quality, octaves=0):
-		interval = Interval.create(interval, quality, octaves)
+	def transpose(self, interval):
 		if not self.pitches:
 			self.get_pitches()
 		for pitch in self.pitches:

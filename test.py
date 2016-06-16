@@ -47,7 +47,7 @@ def compare_pitches(interval, pitch_node, params):
 		print 'result:', 'semitone', pitch.semitone
 		print 'should be:', params['semitone']
 		print
-	print '--------------------------------'
+	#print '--------------------------------'
  
 dir = 'tests'
 
@@ -73,7 +73,7 @@ for i in range (-7, 8):
 	for quality in qualities:	
 		musicxml = Muxml(filename)
 		musicxml.get_pitches()
-		musicxml.transpose(i, quality)
+		musicxml.transpose(Interval.create(i, quality))
 		musicxml.write(dir+'/'+filename.split('.')[0]+direction+quality+str(abs(i))+'.xml')
 
 original = Muxml(filename)
@@ -201,9 +201,5 @@ print 'Testing:'
 for case in test_cases:
 	case[-1]['semitone'] = 12*case[-1]['octave'] + case[-1]['pitch_class']
 	compare_pitches(*case)
-
-
-#import time
-#time.sleep(10)
 
 shutil.rmtree(dir)	
