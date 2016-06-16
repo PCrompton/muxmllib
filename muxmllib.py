@@ -41,7 +41,7 @@ class Muxml():
 		self.dom = xml.dom.minidom.parse(filename)
 		self.notes = None
 		self.pitches = None
-	
+		
 	def get_note_nodes(self):
 		note_nodes = []
 		for note_node in self.dom.getElementsByTagName("note"):
@@ -57,6 +57,7 @@ class Muxml():
 				pitch = Pitch.create(pitch_node)
 				pitches.append(pitch)
 		self.pitches = pitches
+		return pitches
 	
 	def transpose(self, interval, quality, octaves=0):
 		interval = Interval.create(interval, quality, octaves)
@@ -89,8 +90,8 @@ class Pitch():
 		self.step = step
 		self.alter = int(alter)
 		self.octave = int(octave)
-		self.pitch_class = int(PITCHES.find(step)) + self.alter
-		self.semitone = 12*self.octave + self.pitch_class
+		self.update()
+
 	
 	@classmethod
 	def create(cls, pitch_node):
@@ -102,6 +103,24 @@ class Pitch():
 		octave = pitch_node.getElementsByTagName("octave")[0].firstChild.data
 		return Pitch(pitch_node, step, alter, octave)
 	
+	def spell(self):
+		return self.step+ACCIDENTALS[str(self.alter)]+str(self.octave)
+	
+	def update(self):
+		self.pitch_class = (int(CHROMATIC_SCALE.find(self.step)) + self.alter) % len(CHROMATIC_SCALE)
+		self.semitone = 12*self.octave + self.pitch_class
+	
+	def update_node(self):
+		self.node.getElementsByTagName("step")[0].firstChild.data = self.step
+		try:
+			self.node.getElementsByTagName("alter")[0].firstChild.data = self.alter
+		except:
+			alter_node = self.node.ownerDocument.createElement("alter")
+			text_node = self.node.ownerDocument.createTextNode(str(self.alter))
+			alter_node.appendChild(text_node)
+			self.node.insertBefore(alter_node, self.node.getElementsByTagName("octave")[0])
+		self.node.getElementsByTagName("octave")[0].firstChild.data = self.octave
+		
 	def transpose(self, interval):
 		delta_semitone = interval.semitones
 		new_semitone = self.semitone + delta_semitone
@@ -117,17 +136,15 @@ class Pitch():
 			if PITCHES.find(self.step) < PITCHES.find(new_step):
 				new_octave -= 1
 		new_octave += interval.octave
-		self.node.getElementsByTagName("step")[0].firstChild.data = self.step
-		try:
-			self.node.getElementsByTagName("alter")[0].firstChild.data = self.alter
-		except:
-			pass
-		self.node.getElementsByTagName("octave")[0].firstChild.data = self.octave
+
 		self.step = new_step
 		self.alter = new_alter
 		self.octave = new_octave
 		self.pitch_class = new_pitch_class
 		self.semitone = new_semitone
+		self.update()
+		self.update_node()
+		
 
 
 

@@ -19,6 +19,6 @@ for i in range (-7, 8):
 			print musicxml.pitches[j].step + ACCIDENTALS[str(musicxml.pitches[j].alter)] + str(musicxml.pitches[j].octave)
 		musicxml.transpose(i, quality)
 		for j in range(0, len(musicxml.pitches)):
-					print musicxml.pitches[j].step + ACCIDENTALS[str(musicxml.pitches[j].alter)] + str(musicxml.pitches[j].octave)
+			print musicxml.pitches[j].step + ACCIDENTALS[str(musicxml.pitches[j].alter)] + str(musicxml.pitches[j].octave)
 		
-		musicxml.write(filename.split('.')[0]+direction+quality+str(abs(i)))
+		#musicxml.write(filename.split('.')[0]+direction+quality+str(abs(i)))
