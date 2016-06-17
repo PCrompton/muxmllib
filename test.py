@@ -11,17 +11,13 @@ def compare_pitches(interval, pitch_node, params):
 		(pitch.alter, params['alter'], 'alter'),
 		(pitch.octave, params['octave'], 'octave'),
 		(pitch.pitch_class, params['pitch_class'], 'pitch_class'),
-		(pitch.semitone, params['semitone'], 'pitch_class')
+		(pitch.semitone, params['semitone'], 'semitone')
 	]	
-	results = []
+	results = {}
 	for t in tests:
-		results.append(t[0] == t[1])
-	print interval, pitch.spell()
-	if False in results:
-		for r in results:
-			print r, tests[results.index(r)]
-	else:
-		print 'Test Case Passed!'
+		results[t[2]] = (t[0] == t[1], t[0], t[1])
+	return results
+
 
 dir = 'tests'
 
@@ -172,8 +168,22 @@ test_cases = [
 ]
 
 print 'Testing:'
+results = {}
 for case in test_cases:
 	case[-1]['semitone'] = 12*case[-1]['octave'] + case[-1]['pitch_class']
-	compare_pitches(*case)
+	result = compare_pitches(*case)
+	results[case[0]] = result
 
+errors = []
+for key in results.keys():
+	for key2 in results[key].keys():
+		if not results[key][key2][0]:
+			e = key+' '+key2 +': '+'result '+str(results[key][key2][1])+' should be '+str(results[key][key2][2])
+			errors.append(e)
+if errors:
+	for e in errors:
+		print e
+else:
+	print "All Test Cases Passed!"
+		
 shutil.rmtree(dir)	
