@@ -108,6 +108,7 @@ class Pitch():
 	def update(self):
 		self.pitch_class = (int(CHROMATIC_SCALE.find(self.step)) + self.alter) % len(CHROMATIC_SCALE)
 		self.semitone = 12*self.octave + self.pitch_class
+		self.update_node()
 	
 	def update_node(self):
 		self.node.getElementsByTagName("step")[0].firstChild.data = self.step
@@ -142,7 +143,6 @@ class Pitch():
 		self.pitch_class = new_pitch_class
 		self.semitone = new_semitone
 		self.update()
-		self.update_node()
 		
 
 
