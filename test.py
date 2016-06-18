@@ -30,14 +30,14 @@ def test_tranpose():
 		if i == 0:
 			continue	
 		qualities = ['dim', 'min', 'maj', 'aug']
-		direction = Interval.create(i, 'dim').direction
+		direction = Interval(i, 'dim').direction
 		if abs(i) in perfects:
 			qualities.remove('maj')
 			qualities[1] = 'per'	
 		for quality in qualities:	
 			musicxml = Muxml(filename)
 			musicxml.get_pitches()
-			musicxml.transpose(Interval.create(i, quality))
+			musicxml.transpose(Interval(i, quality))
 			musicxml.write(dir+'/'+filename.split('.')[0]+direction+quality+str(abs(i))+'.xml')
 	original = Muxml(filename)
 	up = 'up'

@@ -86,12 +86,8 @@ class Interval():
 		self.octave = o
 		self.semitones = INTERVALS[str(abs(i))][q]*(abs(i)/i)
 		self.direction = [None, 'up', 'down'][abs(i)/i]
-		
-	@classmethod
-	def create(cls, i, q, o=0):
-		return Interval(i, q, o=0)
-"""Represents musical pitch given 
-"""
+
+"""Represents musical pitch given."""
 class Pitch():
 	def __init__(self, pitch_node):
 		self.node = pitch_node
@@ -123,7 +119,7 @@ class Pitch():
 			self.node.insertBefore(alter_node, self.node.getElementsByTagName("octave")[0])
 		self.node.getElementsByTagName("octave")[0].firstChild.data = self.octave
 	
-	"""Transposes whole document given interval object representing desired interval of transposition"""
+	"""Transposes whole document given interval object representing desired interval of transposition."""
 	def transpose(self, interval):
 		delta_semitone = interval.semitones
 		new_semitone = self.semitone + delta_semitone
@@ -145,13 +141,3 @@ class Pitch():
 		self.pitch_class = new_pitch_class
 		self.semitone = new_semitone
 		self.update()
-		
-
-
-
-		
-
-	
-			
-
-
