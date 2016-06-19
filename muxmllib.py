@@ -78,14 +78,27 @@ class Muxml():
 		file.write(xml_str)
 		file.close()
 
-"""Represents musical interval where -7 <= i <= 7, q is the string 'dim', 'min', 'maj', 'per', or 'aug', and 0 <= o <= 9."""
+"""Represents musical interval where -7 <= interval <= 7, quality is the string 'dim', 'min', 'maj', 'per', or 'aug', and 0 <= octave <= 9."""
 class Interval():
-	def __init__(self, i, q, o=0):
-		self.interval = i
-		self.quality = q
-		self.octave = o
-		self.semitones = INTERVALS[str(abs(i))][q]*(abs(i)/i)
-		self.direction = [None, 'up', 'down'][abs(i)/i]
+	def __init__(self, interval, quality, octave=0):
+		self.interval = interval
+		self.quality = quality
+		self.octave = octave
+		self.update()
+
+	def invert(self):
+		intervals = [1,2,3,4,5,6,7]
+		self.interval = intervals[-intervals.index(abs(self.interval))]*-self.interval/abs(self.interval)
+		qualities = ['dim', 'min', 'per', 'maj', 'aug']
+		self.quality = qualities[-(qualities.index(self.quality)-2)+2]
+		self.update()
+
+	def update(self):
+		self.semitones = INTERVALS[str(abs(self.interval))][self.quality]*(abs(self.interval)/self.interval)
+		self.direction = [None, 'up', 'down'][abs(self.interval)/self.interval]
+
+	def _print(self):
+		print self.direction, self.quality, abs(self.interval), self.octave, self.semitones
 
 """Represents musical pitch given."""
 class Pitch():
