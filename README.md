@@ -1,6 +1,6 @@
 # Python Library muxmllib
 
-A Python library for reading, writing, and manipulating MuscXML&trade; files through music specific functions.
+A Python library for reading, writing, and manipulating [MusicXML&trade;](http://usermanuals.musicxml.com/MusicXML/MusicXML.htm#Contents.htm%3FTocPath%3D_____1) files through music specific functions.
 
 ## Use/Install
 
