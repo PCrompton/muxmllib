@@ -18,7 +18,6 @@ def compare_pitches(interval, pitch_node, params):
 	return results
 
 def test_tranpose():
-	pass
 	dir = 'tests'
 	try:
 	    os.stat(dir)

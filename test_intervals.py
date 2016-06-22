@@ -1,6 +1,5 @@
 from muxmllib import *
 
-
 perfects = [1,4,5]
 for i in range (-7, 8):
 	if i == 0:
